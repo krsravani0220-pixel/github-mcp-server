@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GitHub Repository Explorer</title>
+  <meta name="description" content="Explore GitHub repositories through the Model Context Protocol (MCP).">
+  <meta name="theme-color" content="#B0426C">
+
+  <!-- Inline favicon (git-branch glyph) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B0426C'/%3E%3Cg fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' transform='translate(5 5) scale(.9)'%3E%3Cline x1='6' x2='6' y1='3' y2='15'/%3E%3Ccircle cx='18' cy='6' r='3'/%3E%3Ccircle cx='6' cy='18' r='3'/%3E%3Cpath d='M18 9a9 9 0 0 1-9 9'/%3E%3C/g%3E%3C/svg%3E">
+
+  <!-- Optional web fonts; the CSS falls back to system fonts if offline -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+  <!-- Icon sprite (Lucide-style outline icons, ISC licence) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-branch" viewBox="0 0 24 24"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+    <symbol id="i-fork" viewBox="0 0 24 24"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9"/><path d="M12 12v3"/></symbol>
+    <symbol id="i-issue" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></symbol>
+    <symbol id="i-file-code" viewBox="0 0 24 24"><path d="M10 12.5 8 15l2 2.5"/><path d="m14 12.5 2 2.5-2 2.5"/><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5Z"/><path d="M14 2v6h6"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></symbol>
+  </svg>
+
+  <!-- ===== Header ===== -->
+  <header class="app-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg class="icon"><use href="#i-branch"/></svg>
+        </span>
+        <div>
+          <h1 class="brand-title">GitHub Repository Explorer</h1>
+          <p class="brand-subtitle">Explore GitHub repositories through MCP</p>
+        </div>
+      </div>
+
+      <div class="status-group" role="status" aria-live="polite">
+        <span class="status-pill" id="status-mcp" data-state="pending">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="status-text">Connecting to MCP…</span>
+        </span>
+        <span class="status-pill" id="status-github" data-state="pending">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="status-text">Checking GitHub API…</span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main">
+
+    <!-- ===== Repository input ===== -->
+    <section class="card search-card" aria-labelledby="search-title">
+      <div class="search-head">
+        <h2 id="search-title" class="section-title">Explore a repository</h2>
+        <p class="muted">
+  Enter a GitHub owner and repository name to browse its files.
+  <span class="public-repo-note">
+    <svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>
+    Public repositories only
+  </span>
+</p>
+      </div>
+
+      <form id="repo-form" class="repo-form" novalidate>
+        <div class="field">
+          <label for="owner-input">GitHub owner / username</label>
+          <div class="input-wrap">
+            <svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>
+            <input id="owner-input" name="owner" type="text" placeholder="microsoft"
+                   autocomplete="off" autocapitalize="off" spellcheck="false" required>
+          </div>
+        </div>
+
+        <span class="form-slash" aria-hidden="true">/</span>
+
+        <div class="field">
+          <label for="repo-input">Repository name</label>
+          <div class="input-wrap">
+            <svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>
+            <input id="repo-input" name="repo" type="text" placeholder="vscode"
+                   autocomplete="off" autocapitalize="off" spellcheck="false" required>
+          </div>
+        </div>
+
+        <button type="submit" id="explore-btn" class="btn btn-primary">
+          <span class="btn-spinner" aria-hidden="true"></span>
+          <svg class="icon btn-icon" aria-hidden="true"><use href="#i-search"/></svg>
+          <span class="btn-label">Explore Repository</span>
+        </button>
+      </form>
+
+      <div class="examples">
+        <span class="muted">Try an example:</span>
+        <button type="button" class="chip" data-owner="microsoft" data-repo="vscode">microsoft/vscode</button>
+        <button type="button" class="chip" data-owner="facebook" data-repo="react">facebook/react</button>
+        <button type="button" class="chip" data-owner="python" data-repo="cpython">python/cpython</button>
+      </div>
+    </section>
+
+    <!-- ===== Results (rendered by app.js) ===== -->
+    <div id="results"></div>
+
+  </main>
+
+  <footer class="app-footer container">
+    <span>UI &rarr; MCP Client &rarr; MCP Server &rarr; GitHub REST API</span>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
